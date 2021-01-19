@@ -10,8 +10,6 @@ const adminRoutes = require('./routes/admin/auth');
 // environment variables
 env.config();
 
-// mongodb connection
-// mongodb+srv://root:<password>@cluster0.hmbvj.mongodb.net/<dbname>?retryWrites=true&w=majority
 mongoose.connect(`mongodb+srv://${process.env.MONGO_DB_USER}:${process.env.MONGO_DB_PASSWORD}@cluster0.hmbvj.mongodb.net/${process.env.MONGO_DB_DATABASE}?retryWrites=true&w=majority`,
     {
         useNewUrlParser: true,

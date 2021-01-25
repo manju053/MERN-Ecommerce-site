@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import Layout from '../../components/layouts';
-import { Modal, Button } from 'react-bootstrap';
 import Input from '../../UI/input';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, Table } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
-import { getAllCategory } from '../../actions';
 import { addProduct } from '../../actions/product.actions';
-
+import ModalComponent from '../../UI/Modal';
 const Products = () => {
 
-    const categories = useSelector(state => state.category); 
+    const product = useSelector(state => state.product);
+    const categories = useSelector(state => state.category);
 
     const dispatch = useDispatch();
     const [name, setName] = useState('');
@@ -33,16 +32,14 @@ const Products = () => {
         form.append('description', description);
         form.append('category', categoryId);
 
-        for(let pic of productPictures) {
+        for (let pic of productPictures) {
             form.append('productPicture', pic);
         }
         dispatch(addProduct(form));
         setShow(false);
     };
 
-    useEffect(() => {
-        dispatch(getAllCategory())
-    }, []);
+
 
     const createCategoryList = (categories, options = []) => {
         for (let category of categories) {
@@ -68,6 +65,38 @@ const Products = () => {
         ])
     };
 
+    const renderProducts = () => {
+        return (
+            <Table responsive="sm">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Description</th>
+                        <th>Category</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {
+                       product.products.length > 0 ? 
+                        product.products.map(product => 
+                        <tr key={product._id}>
+                            <td>1</td>
+                            <td>{product.name}</td>
+                            <td>{product.price}</td>
+                            <td>{product.quantity}</td>
+                            <td>{product.description}</td>
+                            <td>{product.category.name}</td>
+                        </tr> ) : null
+                    }
+                    
+                </tbody>
+            </Table>
+        )
+    }
+
     return (
         <Layout sidebar>
             <Container>
@@ -79,66 +108,63 @@ const Products = () => {
                         </div>
                     </Col>
                 </Row>
+                <Row>
+                    <Col>
+                        {renderProducts()}
+                    </Col>
+                </Row>
             </Container>
-            <Modal show={show} onHide={handleClose}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Add New Category</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Input
-                        value={name}
-                        placeholder="Product Name"
-                        onChange={(e) => setName(e.target.value)}
-                        type="text"
-                        label="Product Name"
-                    />
+            <ModalComponent
+                show={show}
+                handleClose={handleClose}
+                modalTitle={'Add New Product'}>
+                <Input
+                    value={name}
+                    placeholder="Product Name"
+                    onChange={(e) => setName(e.target.value)}
+                    type="text"
+                    label="Product Name"
+                />
 
-                    <Input
-                        value={quantity}
-                        placeholder="Quantity"
-                        onChange={(e) => setQuantity(e.target.value)}
-                        type="text"
-                        label="Quantity"
-                    />
+                <Input
+                    value={quantity}
+                    placeholder="Quantity"
+                    onChange={(e) => setQuantity(e.target.value)}
+                    type="text"
+                    label="Quantity"
+                />
 
-                    <Input
-                        value={price}
-                        placeholder="Price"
-                        onChange={(e) => setPrice(e.target.value)}
-                        type="number"
-                        label="Price"
-                    />
+                <Input
+                    value={price}
+                    placeholder="Price"
+                    onChange={(e) => setPrice(e.target.value)}
+                    type="number"
+                    label="Price"
+                />
 
-                    <Input
-                        value={description}
-                        placeholder="Description"
-                        onChange={(e) => setDescription(e.target.value)}
-                        type="textarea"
-                        label="Price"
-                    />
-                    <select className="form-control" onChange={e => setCategoryId(e.target.value)}
-                        value={categoryId}>
-                        <option value=''>Select Category</option>
-                        {
-                            createCategoryList(categories.categories).map(option => {
-                                return (
-                                    <option key={option.value} value={option.value}>
-                                        {option.name}
-                                    </option>
-                                )
-                            })
-                        }
-                    </select>
+                <Input
+                    value={description}
+                    placeholder="Description"
+                    onChange={(e) => setDescription(e.target.value)}
+                    type="textarea"
+                    label="Price"
+                />
+                <select className="form-control" onChange={e => setCategoryId(e.target.value)}
+                    value={categoryId}>
+                    <option value=''>Select Category</option>
+                    {
+                        createCategoryList(categories.categories).map(option => {
+                            return (
+                                <option key={option.value} value={option.value}>
+                                    {option.name}
+                                </option>
+                            )
+                        })
+                    }
+                </select>
 
-                    <input type="file" name="productPicture" onChange={handleProductPictures}/>
-
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="primary" onClick={handleClose}>
-                        Save Changes
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+                <input type="file" name="productPicture" onChange={handleProductPictures} />
+            </ModalComponent>
         </Layout>
     )
 }

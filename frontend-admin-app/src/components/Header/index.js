@@ -43,7 +43,7 @@ const Header = () => {
     };
     return (
         <div >
-            <Navbar style={{ zIndex: '1' }} collapseOnSelect expand="lg" bg="dark" variant="dark">
+            <Navbar fixed="top" style={{ zIndex: '1' }} collapseOnSelect expand="lg" bg="dark" variant="dark">
                 <Container fluid>
                     <Link className="navbar-brand" to="/">
                         Admin Dashboard

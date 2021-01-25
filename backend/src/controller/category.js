@@ -17,6 +17,7 @@ function createCategories(categories, parentId = null) {
             _id: cat._id,
             name: cat.name,
             slug: cat.slug,
+            parentId: cat.parentId,
             children: createCategories(categories, cat._id.toString())
         })
     }

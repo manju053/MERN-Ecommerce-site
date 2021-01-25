@@ -18,7 +18,7 @@ const Header = () => {
         return (
             <Nav>
                 <li className="nav-item">
-                    <span  className="nav-link" onClick={logout}>Signout</span>
+                    <span  className="nav-link" onClick={() => logout()}>Signout</span>
                 </li>
             </Nav>
         )

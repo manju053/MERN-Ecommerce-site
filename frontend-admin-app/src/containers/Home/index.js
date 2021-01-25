@@ -2,17 +2,13 @@ import React from 'react'
 import { Container, Jumbotron } from 'react-bootstrap'
 import Layout from '../../components/layouts';
 import { Row, Col} from 'react-bootstrap';
-import './style.css'
+import './style.css';
+import { NavLink } from 'react-router-dom';
 
 const Home = () => {
     return (
-       <Layout>
-           <Container fluid>
-           <Row>
-               <Col md={2} className="sidebar">Sidebar</Col>
-               <Col md={10} style={{marginLeft: 'auto'}}>Main </Col>
-           </Row>
-           </Container>
+       <Layout sidebar>
+
            
            {/* <Jumbotron className="text-center" style={{margin: '5rem', background: '#fff'}}>
                <h1>Welcome to Admin Dashboard</h1>

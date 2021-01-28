@@ -6,6 +6,9 @@ import Layout from '../../components/layouts';
 import { Modal, Button } from 'react-bootstrap';
 import Input from '../../UI/input';
 import ModalComponent from '../../UI/Modal';
+import CheckboxTree from 'react-checkbox-tree';
+import { IoCheckbox, IoSquareOutline, IoCheckboxOutline, IoChevronDownOutline, IoChevronForwardSharp } from 'react-icons/io5';
+import 'react-checkbox-tree/lib/react-checkbox-tree.css';
 
 const Category = () => {
 
@@ -19,6 +22,12 @@ const Category = () => {
     const [categoryName, setCategoryName] = useState('');
     const [parentCategoryId, setParentCategoryId] = useState('');
     const [categoryImage, setCategoryImage] = useState('');
+    const [checked, setChecked] = useState([]);
+    const [expanded, setExpanded] = useState([]);
+    const [checkedArray, setCheckedArray] = useState([]);
+    const [expandedArray, setExpandedArray] = useState([]);
+    const [updateCategoryModal, setUpdateCategoryModal] = useState(false);
+
     const dispatch = useDispatch();
 
 
@@ -42,15 +51,14 @@ const Category = () => {
         let cat = [];
         for (let category of categories) {
             cat.push(
-                <li key={category.name}>
-                    {category.name}
-                    {
-                        category.children.length > 0 ? <ul>{renderCategories(category.children)}</ul> : ''
-                    }
-                </li>
+                {
+                    label: category.name,
+                    value: category._id,
+                    children: category.children.length > 0 && renderCategories(category.children)
+                }
+
             )
         }
-
         return cat;
     };
 
@@ -59,7 +67,8 @@ const Category = () => {
         for (let category of categories) {
             options.push({
                 value: category._id,
-                name: category.name
+                name: category.name,
+                parentId: category.parentId
             });
 
             if (category.children.length > 0) {
@@ -72,7 +81,29 @@ const Category = () => {
 
     const handleCategoryImage = (e) => {
         setCategoryImage(e.target.files[0]);
-    }
+    };
+
+    const updateCategory = () => {
+        setUpdateCategoryModal(true);
+        const myCategories = createCategoryList(categories.categories);
+        const checkedArray = [];
+        if(checked.length > 0) {
+            checked.forEach((categoryId, index) => {
+                const category = myCategories.find((category, _index) => category.value === categoryId);
+                category && checkedArray.push(category);
+            })
+        }
+
+        if(expanded.length > 0) {
+            expanded.forEach((categoryId, index) => {
+                const category = myCategories.find((category, _index) => category.value === categoryId);
+                category && checkedArray.push(category);
+            })
+        }
+
+    };
+
+
     return (
         <Layout sidebar>
             <Container>
@@ -86,11 +117,32 @@ const Category = () => {
                 </Row>
                 <Row>
                     <Col>
-                        <ul>
+                        {/* <ul>
                             {
                                 renderCategories(categories.categories)
                             }
-                        </ul>
+                        </ul> */}
+                        <CheckboxTree
+                            nodes={renderCategories(categories.categories)}
+                            checked={checked}
+                            expanded={expanded}
+                            onCheck={checked => setChecked(checked)}
+                            onExpand={expanded => setExpanded(expanded)}
+                            icons={{
+                                check: <IoCheckbox />,
+                                uncheck: <IoSquareOutline />,
+                                halfCheck: <IoCheckboxOutline />,
+                                expandClose: <IoChevronForwardSharp />,
+                                expandOpen: <IoChevronDownOutline />,
+                            }}
+                        />
+                    </Col>
+                </Row>
+
+                <Row>
+                    <Col>
+                        <button>Delete</button>
+                        <button onClick={updateCategory}>Edit</button>
                     </Col>
                 </Row>
             </Container>
@@ -120,6 +172,61 @@ const Category = () => {
                         })
                     }
                 </select>
+                <input type="file" name="categoryImage" onChange={handleCategoryImage} />
+            </ModalComponent>
+
+
+            {/* Edit category */}
+
+            <ModalComponent
+                show={updateCategoryModal}
+                handleClose={() => setUpdateCategoryModal(false)}
+                modalTitle={'Update Categories'}
+                size="lg">
+
+                    <Row>
+                        <Col>
+                            <h6>Expanded</h6>
+                        </Col>
+                    </Row>
+
+                <Row>
+                    <Col>
+                        <Input
+                            value={categoryName}
+                            placeholder="Category Name"
+                            onChange={(e) => setCategoryName(e.target.value)}
+                            type="text"
+                        />
+                    </Col>
+
+                    <Col>
+                        <select className="form-control" onChange={e => setParentCategoryId(e.target.value)}
+                            value={parentCategoryId}>
+                            <option value=''>Select Category</option>
+                            {
+                                createCategoryList(categories.categories).map(option => {
+                                    return (
+                                        <option key={option.value} value={option.value}>
+                                            {option.name}
+                                        </option>
+                                    )
+                                })
+                            }
+                        </select>
+                    </Col>
+                    <Col>
+                        <select className="form-control">
+                            <option value=''>Select type</option>
+                            <option value='store'>Store</option>
+                            <option value='product'>Product</option>
+                            <option value='page'>Page</option>
+                        </select>
+                    </Col>
+                </Row>
+
+
+
                 <input type="file" name="categoryImage" onChange={handleCategoryImage} />
             </ModalComponent>
 

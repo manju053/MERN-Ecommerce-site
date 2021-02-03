@@ -2,7 +2,7 @@ import React from 'react';
 import { Navbar, Nav, NavDropdown, Container } from 'react-bootstrap';
 import { Link, NavLink } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { signout } from '../../actions/auth.actions';
+import { signout } from '../../actions';
 
 
 const Header = () => {

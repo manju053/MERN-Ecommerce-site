@@ -12,13 +12,13 @@ function createCategories(categories, parentId = null) {
     }
 
     for(let cat of category) {
-    console.log('categories', categories);
 
         categoryList.push({
             _id: cat._id,
             name: cat.name,
             slug: cat.slug,
             parentId: cat.parentId,
+            type: cat.type,
             children: createCategories(categories, cat._id.toString())
         })
     }
@@ -30,6 +30,7 @@ function createCategories(categories, parentId = null) {
 exports.initialData = async (req, res) => {
 
     const categories = await Category.find({}).exec();
+    console.log('categories', categories);
     const products = await Product.find({}).select('_id name slug description productPictures price quantity category')
         .populate('category').exec();
 
